@@ -153,14 +153,79 @@ class ReviewsService: ObservableObject {
             }
         }
     }
-    
-    func getRestaurantRating(restaurantId: String, completion: @escaping (RestaurantRating?) -> Void) {
+      func getRestaurantRating(restaurantId: String, completion: @escaping (RestaurantRating?) -> Void) {
         db.collection(ratingsCollection).document(restaurantId).getDocument { document, error in
             if let document = document, document.exists {
                 let rating = try? document.data(as: RestaurantRating.self)
                 completion(rating)
             } else {
                 completion(nil)
+            }
+        }
+    }
+    
+    // MARK: - Notification Methods
+    
+    private func notifyFriendsAboutNewReview(_ review: RestaurantReview) {
+        // Get user's friends
+        guard let currentUserId = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("users").document(currentUserId).getDocument { [weak self] document, error in
+            guard let userData = document?.data(),
+                  let friends = userData["friends"] as? [String] else { return }
+            
+            // Get FCM tokens for friends
+            let group = DispatchGroup()
+            var friendTokens: [String] = []
+            
+            for friendId in friends {
+                group.enter()
+                self?.db.collection("users").document(friendId).getDocument { document, error in
+                    if let userData = document?.data(),
+                       let fcmToken = userData["fcmToken"] as? String {
+                        friendTokens.append(fcmToken)
+                    }
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                // Send notifications to all friends
+                for token in friendTokens {
+                    self?.notificationService.sendNewReviewNotification(
+                        to: token,
+                        reviewerName: review.userName,
+                        restaurantName: review.restaurantName,
+                        rating: review.rating
+                    )
+                }
+            }
+        }
+    }
+    
+    private func notifyReviewAuthorAboutLike(reviewId: String, likerId: String) {
+        // Get review details
+        db.collection(reviewsCollection).document(reviewId).getDocument { [weak self] document, error in
+            guard let reviewData = document?.data(),
+                  let review = try? document?.data(as: RestaurantReview.self),
+                  review.userId != likerId else { return }
+            
+            // Get liker's name
+            self?.db.collection("users").document(likerId).getDocument { likerDoc, error in
+                guard let likerData = likerDoc?.data(),
+                      let likerName = likerData["name"] as? String else { return }
+                
+                // Get review author's FCM token
+                self?.db.collection("users").document(review.userId).getDocument { authorDoc, error in
+                    guard let authorData = authorDoc?.data(),
+                          let fcmToken = authorData["fcmToken"] as? String else { return }
+                    
+                    self?.notificationService.sendReviewLikedNotification(
+                        to: fcmToken,
+                        likerName: likerName,
+                        restaurantName: review.restaurantName
+                    )
+                }
             }
         }
     }
