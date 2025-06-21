@@ -16,6 +16,15 @@ SocialEats is a modern iOS application built with SwiftUI that combines location
 - See where friends plan to dine
 - 12-hour restaurant selection expiration system
 - Friend status indicators (online/offline)
+- Push notifications for friend activity and requests
+
+### ⭐ Reviews & Ratings
+- Write and read restaurant reviews
+- 5-star rating system with detailed feedback
+- Photo uploads with reviews
+- Like and interact with reviews
+- Verified visit badges for authentic reviews
+- Push notifications for review interactions
 
 ### 🔐 Authentication & Security
 - Firebase Authentication integration
@@ -38,10 +47,13 @@ socialeats/
 ├── Models/                 # Data models and structures
 │   ├── User.swift
 │   ├── Restaurant.swift
-│   └── Friend.swift
+│   ├── Friend.swift
+│   └── Review.swift
 ├── Views/                  # SwiftUI views organized by feature
 │   ├── Authentication/
 │   ├── Restaurants/
+│   │   ├── RestaurantDetailView.swift
+│   │   └── WriteReviewView.swift
 │   ├── Friends/
 │   ├── Components/
 │   └── ContentView.swift
@@ -52,7 +64,9 @@ socialeats/
 │   ├── AuthenticationService.swift
 │   ├── UserService.swift
 │   ├── GooglePlacesService.swift
-│   └── LocationService.swift
+│   ├── LocationService.swift
+│   ├── NotificationService.swift
+│   └── ReviewsService.swift
 ├── Utilities/             # Helper functions and extensions
 │   ├── Constants.swift
 │   └── Extensions.swift
@@ -190,6 +204,8 @@ service cloud.firestore {
 - `UserService`: Firestore user data management
 - `GooglePlacesService`: Restaurant discovery and details
 - `LocationService`: Core Location wrapper with permissions
+- `NotificationService`: Push notifications for social features
+- `ReviewsService`: Restaurant reviews and ratings management
 
 ### ViewModels
 - `RestaurantsViewModel`: Manages map data and restaurant selection
@@ -215,8 +231,8 @@ service cloud.firestore {
 
 ## Future Enhancements
 
-- [ ] Push notifications for friend activity
-- [ ] Restaurant reviews and ratings
+- [x] Push notifications for friend activity
+- [x] Restaurant reviews and ratings
 - [ ] Group dining coordination
 - [ ] Photo sharing at restaurants
 - [ ] Restaurant reservations integration

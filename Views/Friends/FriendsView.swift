@@ -95,35 +95,46 @@ struct EmptyFriendsView: View {
     let onAddFriend: () -> Void
     
     var body: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "person.2.circle")
-                .font(.system(size: 80))
-                .foregroundColor(.gray)
+        VStack(spacing: 32) {
+            Image(systemName: "person.2.fill")
+                .font(.system(size: 72, weight: .ultraLight))
+                .foregroundColor(.orange.opacity(0.3))
             
-            VStack(spacing: 8) {
-                Text("No Friends Yet")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+            VStack(spacing: 16) {
+                Text("Connect with Friends")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
                 
-                Text("Add friends to see where they're dining!")
-                    .font(.subheadline)
+                Text("Add friends to discover where they're dining and share your own restaurant experiences together.")
+                    .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
+                    .lineSpacing(4)
             }
             
             Button(action: onAddFriend) {
-                HStack {
-                    Image(systemName: "person.badge.plus")
-                    Text("Add Friends")
+                HStack(spacing: 12) {
+                    Image(systemName: "person.badge.plus.fill")
+                        .font(.system(size: 18, weight: .medium))
+                    Text("Add Your First Friend")
+                        .fontWeight(.bold)
                 }
-                .font(.headline)
                 .foregroundColor(.white)
-                .padding()
-                .background(Color.orange)
-                .cornerRadius(12)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [Color.orange, Color.orange.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .cornerRadius(16)
+                .shadow(color: .orange.opacity(0.3), radius: 8, x: 0, y: 4)
             }
         }
-        .padding(40)
+        .padding(48)
     }
 }
 
