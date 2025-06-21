@@ -1,4 +1,5 @@
 import SwiftUI
+import Firebase
 
 struct RestaurantDetailView: View {
     let restaurant: Restaurant
@@ -160,39 +161,74 @@ struct RestaurantDetailView: View {
                                 )
                             }
                         }
-                        
-                        // Reviews Section
-                        VStack(alignment: .leading, spacing: 16) {
+                          // Reviews Section with modern design
+                        VStack(alignment: .leading, spacing: 20) {
                             HStack {
-                                Text("Reviews")
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
+                                HStack(spacing: 8) {
+                                    Image(systemName: "star.fill")
+                                        .foregroundColor(.orange.opacity(0.8))
+                                        .font(.system(size: 18))
+                                    Text("Reviews")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
+                                }
                                 
                                 Spacer()
                                 
                                 if !reviews.isEmpty {
-                                    Text("\(reviews.count) reviews")
-                                        .font(.caption)
+                                    Text("\(reviews.count) review\(reviews.count == 1 ? "" : "s")")
+                                        .font(.subheadline)
                                         .foregroundColor(.secondary)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(12)
                                 }
                             }
                             
                             if reviews.isEmpty {
-                                VStack(spacing: 12) {
-                                    Image(systemName: "star.circle")
-                                        .font(.system(size: 32))
-                                        .foregroundColor(.gray.opacity(0.6))
+                                VStack(spacing: 16) {
+                                    Image(systemName: "star.circle.fill")
+                                        .font(.system(size: 48))
+                                        .foregroundColor(.orange.opacity(0.3))
                                     
-                                    Text("No reviews yet")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                    VStack(spacing: 8) {
+                                        Text("No reviews yet")
+                                            .font(.headline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.primary)
+                                        
+                                        Text("Be the first to share your experience!")
+                                            .font(.body)
+                                            .foregroundColor(.secondary)
+                                            .multilineTextAlignment(.center)
+                                    }
                                     
-                                    Text("Be the first to review this restaurant!")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                                    Button(action: { showingReviewSheet = true }) {
+                                        Text("Write First Review")
+                                            .font(.headline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 24)
+                                            .padding(.vertical, 12)
+                                            .background(
+                                                LinearGradient(
+                                                    colors: [Color.orange, Color.orange.opacity(0.8)],
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                )
+                                            )
+                                            .cornerRadius(16)
+                                    }
                                 }
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 24)
+                                .padding(.vertical, 32)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(Color.gray.opacity(0.03))
+                                        .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                                )
                             } else {
                                 LazyVStack(spacing: 16) {
                                     ForEach(reviews.prefix(3)) { review in
@@ -200,17 +236,27 @@ struct RestaurantDetailView: View {
                                     }
                                     
                                     if reviews.count > 3 {
-                                        Button("View All Reviews") {
+                                        Button("View All \(reviews.count) Reviews") {
                                             // Navigate to all reviews
                                         }
-                                        .font(.subheadline)
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
                                         .foregroundColor(.orange)
+                                        .padding(.vertical, 16)
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.orange.opacity(0.05))
+                                        .cornerRadius(16)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+                                        )
                                     }
                                 }
                             }
                         }
                     }
-                    .padding(20)
+                    .padding(24)
+                }
                 }
             }
             .navigationTitle("")
@@ -257,36 +303,55 @@ struct RestaurantDetailView: View {
 struct ReviewRow: View {
     let review: RestaurantReview
     @State private var isLiked = false
+    @StateObject private var reviewsService = ReviewsService()
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 16) {
                 AsyncImage(url: URL(string: review.userPhotoURL ?? "")) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                 } placeholder: {
                     Circle()
-                        .fill(Color.gray.opacity(0.3))
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.orange.opacity(0.3), Color.orange.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
                         .overlay(
                             Image(systemName: "person.fill")
-                                .foregroundColor(.gray)
-                                .font(.caption)
+                                .foregroundColor(.orange.opacity(0.6))
+                                .font(.system(size: 16, weight: .medium))
                         )
                 }
-                .frame(width: 36, height: 36)
+                .frame(width: 44, height: 44)
                 .clipShape(Circle())
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 8) {
                         Text(review.userName)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
                         
                         if review.isVerifiedVisit {
-                            Image(systemName: "checkmark.seal.fill")
-                                .foregroundColor(.blue)
-                                .font(.caption)
+                            HStack(spacing: 4) {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .foregroundColor(.blue)
+                                    .font(.system(size: 12))
+                                Text("Verified")
+                                    .font(.caption2)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.blue)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
                         }
                         
                         Spacer()
@@ -296,38 +361,79 @@ struct ReviewRow: View {
                             .foregroundColor(.secondary)
                     }
                     
-                    HStack(spacing: 2) {
+                    HStack(spacing: 1) {
                         ForEach(1...5, id: \.self) { star in
                             Image(systemName: star <= Int(review.rating.rounded()) ? "star.fill" : "star")
                                 .foregroundColor(.orange)
-                                .font(.caption)
+                                .font(.system(size: 14, weight: .medium))
                         }
+                        
+                        Spacer()
                     }
                 }
             }
             
             Text(review.reviewText)
-                .font(.subheadline)
+                .font(.body)
                 .foregroundColor(.primary)
-                .lineLimit(3)
+                .lineLimit(4)
+                .lineSpacing(2)
             
-            HStack {
-                Button(action: { isLiked.toggle() }) {
-                    HStack(spacing: 4) {
+            HStack(spacing: 16) {
+                Button(action: toggleLike) {
+                    HStack(spacing: 6) {
                         Image(systemName: isLiked ? "heart.fill" : "heart")
-                            .foregroundColor(isLiked ? .red : .gray)
-                        Text("\(review.likeCount)")
-                            .font(.caption)
+                            .foregroundColor(isLiked ? .red : .gray.opacity(0.7))
+                            .font(.system(size: 16, weight: .medium))
+                        Text("\(review.likeCount + (isLiked ? 1 : 0))")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
                             .foregroundColor(.secondary)
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.gray.opacity(0.05))
+                    .cornerRadius(12)
                 }
+                .buttonStyle(PlainButtonStyle())
                 
                 Spacer()
             }
         }
-        .padding(16)
-        .background(Color.gray.opacity(0.05))
-        .cornerRadius(12)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white)
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+        )
+        .onAppear {
+            // Check if current user has liked this review
+            if let currentUserId = Auth.auth().currentUser?.uid {
+                isLiked = review.likes.contains(currentUserId)
+            }
+        }
+    }
+    
+    private func toggleLike() {
+        guard let currentUserId = Auth.auth().currentUser?.uid else { return }
+        
+        if isLiked {
+            reviewsService.unlikeReview(review.id, userId: currentUserId) { success in
+                if success {
+                    isLiked = false
+                }
+            }
+        } else {
+            reviewsService.likeReview(review.id, userId: currentUserId) { success in
+                if success {
+                    isLiked = true
+                }
+            }
+        }
     }
 }
 
