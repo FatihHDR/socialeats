@@ -156,10 +156,11 @@ pod install
 ### 6. Configure Xcode Project
 1. Add location usage description in `Info.plist` (already included)
 2. Add contacts usage description in `Info.plist` (already included)
-3. Set your development team in project settings
-4. Update the bundle identifier to match your Firebase project
+3. Add push notifications capability in project settings
+4. Set your development team in project settings
+5. Update the bundle identifier to match your Firebase project
 
-### 6. Build and Run
+### 7. Build and Run
 1. Select your target device or simulator
 2. Build and run the project (⌘+R)
 
