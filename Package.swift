@@ -7,7 +7,7 @@ let package = Package(
         .iOS(.v14)
     ],
     products: [
-        .library(
+        .executable(
             name: "SocialEats",
             targets: ["SocialEats"]
         ),
@@ -23,14 +23,15 @@ let package = Package(
         )
     ],
     targets: [
-        .target(
+        .executableTarget(
             name: "SocialEats",
             dependencies: [
                 .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
                 .product(name: "GoogleMaps", package: "ios-maps-sdk"),
                 .product(name: "GooglePlaces", package: "ios-maps-sdk")
-            ]
+            ],
+            path: "."
         ),
         .testTarget(
             name: "SocialEatsTests",

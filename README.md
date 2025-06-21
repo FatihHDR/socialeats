@@ -34,7 +34,7 @@ SocialEats is a modern iOS application built with SwiftUI that combines location
 This project follows the **MVVM (Model-View-ViewModel)** architecture pattern:
 
 ```
-SocialEats/
+socialeats/
 ├── Models/                 # Data models and structures
 │   ├── User.swift
 │   ├── Restaurant.swift
@@ -43,7 +43,8 @@ SocialEats/
 │   ├── Authentication/
 │   ├── Restaurants/
 │   ├── Friends/
-│   └── Components/
+│   ├── Components/
+│   └── ContentView.swift
 ├── ViewModels/            # Business logic and state management
 │   ├── RestaurantsViewModel.swift
 │   └── FriendsViewModel.swift
@@ -55,7 +56,9 @@ SocialEats/
 ├── Utilities/             # Helper functions and extensions
 │   ├── Constants.swift
 │   └── Extensions.swift
-└── Resources/             # Assets, Info.plist, etc.
+├── Resources/             # Assets, Info.plist, etc.
+├── SocialEatsApp.swift    # Main app entry point
+└── Package.swift          # Swift Package Manager configuration
 ```
 
 ## Prerequisites
@@ -70,7 +73,7 @@ SocialEats/
 ### 1. Clone the Repository
 ```bash
 git clone <repository-url>
-cd socialeats/SocialEats
+cd socialeats
 ```
 
 ### 2. Firebase Setup

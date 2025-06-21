@@ -1,4 +1,5 @@
 import Foundation
+import CoreLocation
 
 extension Date {
     func timeAgoDisplay() -> String {
