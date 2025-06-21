@@ -13,141 +13,211 @@ struct WriteReviewView: View {
     @State private var selectedPhotos: [UIImage] = []
     @State private var showingImagePicker = false
     @State private var isSubmitting = false
-    
-    var body: some View {
+      var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    // Restaurant Info
-                    HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 32) {
+                    // Restaurant Info with modern design
+                    HStack(spacing: 20) {
                         AsyncImage(url: photoURL) { image in
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                         } placeholder: {
                             Rectangle()
-                                .fill(Color.gray.opacity(0.2))
+                                .fill(
+                                    LinearGradient(
+                                        colors: [Color.gray.opacity(0.2), Color.gray.opacity(0.1)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
                                 .overlay(
                                     Image(systemName: "photo")
-                                        .foregroundColor(.gray)
+                                        .font(.system(size: 24, weight: .light))
+                                        .foregroundColor(.gray.opacity(0.6))
                                 )
                         }
-                        .frame(width: 80, height: 80)
-                        .cornerRadius(12)
+                        .frame(width: 88, height: 88)
+                        .cornerRadius(16)
                         .clipped()
+                        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
                         
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text(restaurant.name)
-                                .font(.headline)
-                                .fontWeight(.semibold)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary)
                             
                             Text(restaurant.address)
-                                .font(.caption)
+                                .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .lineLimit(2)
+                                .multilineTextAlignment(.leading)
                         }
                         
                         Spacer()
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 24)
                     
-                    VStack(alignment: .leading, spacing: 20) {
-                        // Rating Section
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Rate your experience")
-                                .font(.headline)
-                                .fontWeight(.medium)
-                            
+                    VStack(alignment: .leading, spacing: 32) {
+                        // Rating Section with enhanced design
+                        VStack(alignment: .leading, spacing: 20) {
                             HStack(spacing: 8) {
-                                ForEach(1...5, id: \.self) { star in
-                                    Button(action: { rating = Double(star) }) {
-                                        Image(systemName: star <= Int(rating) ? "star.fill" : "star")
-                                            .font(.title2)
-                                            .foregroundColor(.orange)
+                                Image(systemName: "star.fill")
+                                    .foregroundColor(.orange.opacity(0.8))
+                                    .font(.system(size: 20))
+                                Text("Rate your experience")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                            }
+                            
+                            VStack(spacing: 16) {
+                                HStack(spacing: 12) {
+                                    ForEach(1...5, id: \.self) { star in
+                                        Button(action: { rating = Double(star) }) {
+                                            Image(systemName: star <= Int(rating) ? "star.fill" : "star")
+                                                .font(.system(size: 32, weight: .medium))
+                                                .foregroundColor(star <= Int(rating) ? .orange : .gray.opacity(0.3))
+                                                .scaleEffect(star == Int(rating) ? 1.1 : 1.0)
+                                                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: rating)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
                                     }
+                                }
+                                
+                                Text(ratingText)
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.orange)
+                                    .animation(.easeInOut(duration: 0.2), value: rating)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        
+                        // Review Text Section with modern styling
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "text.bubble.fill")
+                                    .foregroundColor(.orange.opacity(0.8))
+                                    .font(.system(size: 18))
+                                Text("Share your thoughts")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                            }
+                            
+                            ZStack(alignment: .topLeading) {
+                                if reviewText.isEmpty {
+                                    Text("Tell others about your experience, the food, service, ambiance...")
+                                        .foregroundColor(.secondary.opacity(0.7))
+                                        .font(.body)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 16)
+                                }
+                                
+                                TextEditor(text: $reviewText)
+                                    .font(.body)
+                                    .lineSpacing(4)
+                                    .frame(minHeight: 140)
+                                    .padding(12)
+                                    .background(Color.clear)
+                            }
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.gray.opacity(0.05))
+                                    .stroke(reviewText.isEmpty ? Color.gray.opacity(0.2) : Color.orange.opacity(0.4), lineWidth: 1.5)
+                            )
+                        }
+                        
+                        // Photos Section with enhanced design
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "camera.fill")
+                                        .foregroundColor(.orange.opacity(0.8))
+                                        .font(.system(size: 18))
+                                    Text("Add photos")
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
                                 }
                                 
                                 Spacer()
                                 
-                                Text(ratingText)
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.orange)
-                            }
-                        }
-                        
-                        // Review Text Section
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Write your review")
-                                .font(.headline)
-                                .fontWeight(.medium)
-                            
-                            TextEditor(text: $reviewText)
-                                .frame(minHeight: 120)
-                                .padding(12)
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                )
-                        }
-                        
-                        // Photos Section
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("Add photos")
-                                    .font(.headline)
-                                    .fontWeight(.medium)
-                                
-                                Spacer()
-                                
                                 Button(action: { showingImagePicker = true }) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "camera")
-                                        Text("Add")
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "plus.circle.fill")
+                                            .font(.system(size: 16))
+                                        Text("Add Photo")
+                                            .fontWeight(.semibold)
                                     }
-                                    .font(.caption)
                                     .foregroundColor(.orange)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 10)
                                     .background(Color.orange.opacity(0.1))
-                                    .cornerRadius(16)
+                                    .cornerRadius(20)
                                 }
                             }
                             
                             if !selectedPhotos.isEmpty {
                                 ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 12) {
+                                    HStack(spacing: 16) {
                                         ForEach(Array(selectedPhotos.enumerated()), id: \.offset) { index, photo in
                                             ZStack(alignment: .topTrailing) {
                                                 Image(uiImage: photo)
                                                     .resizable()
                                                     .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 80, height: 80)
-                                                    .cornerRadius(8)
+                                                    .frame(width: 88, height: 88)
+                                                    .cornerRadius(12)
                                                     .clipped()
+                                                    .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                                                 
                                                 Button(action: { selectedPhotos.remove(at: index) }) {
                                                     Image(systemName: "xmark.circle.fill")
+                                                        .font(.system(size: 20))
                                                         .foregroundColor(.red)
                                                         .background(Color.white)
                                                         .clipShape(Circle())
+                                                        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
                                                 }
                                                 .offset(x: 8, y: -8)
                                             }
                                         }
                                     }
-                                    .padding(.horizontal, 20)
+                                    .padding(.horizontal, 24)
                                 }
-                                .padding(.horizontal, -20)
+                                .padding(.horizontal, -24)
+                            } else {
+                                Button(action: { showingImagePicker = true }) {
+                                    VStack(spacing: 12) {
+                                        Image(systemName: "camera.circle.fill")
+                                            .font(.system(size: 32))
+                                            .foregroundColor(.orange.opacity(0.6))
+                                        
+                                        Text("Add photos to help others")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 100)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(Color.gray.opacity(0.05))
+                                            .stroke(Color.gray.opacity(0.2), lineWidth: 1.5, style: StrokeStyle(lineWidth: 1.5, dash: [8, 6]))
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 24)
                     
-                    Spacer(minLength: 100)
+                    Spacer(minLength: 120)
                 }
+                .padding(.top, 8)
             }
             .navigationTitle("Write Review")
             .navigationBarTitleDisplayMode(.inline)
