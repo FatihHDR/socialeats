@@ -122,6 +122,8 @@ cd socialeats
    - Firebase: `https://github.com/firebase/firebase-ios-sdk`
    - Google Maps: `https://github.com/googlemaps/ios-maps-sdk`
 
+Note: Make sure to add Firebase/Messaging for push notifications support.
+
 #### Using CocoaPods
 Create a `Podfile` in the project root:
 ```ruby
@@ -131,6 +133,8 @@ use_frameworks!
 target 'SocialEats' do
   pod 'Firebase/Auth'
   pod 'Firebase/Firestore'
+  pod 'Firebase/Messaging'
+  pod 'Firebase/Storage'
   pod 'GoogleMaps'
   pod 'GooglePlaces'
 end
