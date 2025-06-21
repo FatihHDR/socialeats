@@ -223,4 +223,6 @@ struct NotificationPayload: Codable {
 extension Notification.Name {
     static let showFriendsTab = Notification.Name("showFriendsTab")
     static let showFriendRequests = Notification.Name("showFriendRequests")
+    static let showRestaurantsTab = Notification.Name("showRestaurantsTab")
+    static let showRestaurantReviews = Notification.Name("showRestaurantReviews")
 }
