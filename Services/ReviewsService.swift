@@ -87,13 +87,16 @@ class ReviewsService: ObservableObject {
                 }
             }
     }
-    
-    func likeReview(_ reviewId: String, userId: String, completion: @escaping (Bool) -> Void) {
+      func likeReview(_ reviewId: String, userId: String, completion: @escaping (Bool) -> Void) {
         let reviewRef = db.collection(reviewsCollection).document(reviewId)
         
         reviewRef.updateData([
             "likes": FieldValue.arrayUnion([userId])
-        ]) { error in
+        ]) { [weak self] error in
+            if error == nil {
+                // Send notification to review author
+                self?.notifyReviewAuthorAboutLike(reviewId: reviewId, likerId: userId)
+            }
             completion(error == nil)
         }
     }
