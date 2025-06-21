@@ -153,8 +153,7 @@ extension NotificationService: UNUserNotificationCenterDelegate {
         
         completionHandler()
     }
-    
-    private func handleNotificationAction(type: String, userInfo: [AnyHashable: Any]) {
+      private func handleNotificationAction(type: String, userInfo: [AnyHashable: Any]) {
         switch type {
         case "friend_activity":
             // Navigate to friends tab
@@ -162,6 +161,13 @@ extension NotificationService: UNUserNotificationCenterDelegate {
         case "friend_request":
             // Navigate to friend requests
             NotificationCenter.default.post(name: .showFriendRequests, object: nil)
+        case "new_review", "review_liked":
+            // Navigate to restaurants tab or specific restaurant
+            if let restaurantName = userInfo["restaurant_name"] as? String {
+                NotificationCenter.default.post(name: .showRestaurantReviews, object: restaurantName)
+            } else {
+                NotificationCenter.default.post(name: .showRestaurantsTab, object: nil)
+            }
         default:
             break
         }
