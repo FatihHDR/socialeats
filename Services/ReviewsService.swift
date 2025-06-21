@@ -8,6 +8,7 @@ class ReviewsService: ObservableObject {
     private let storage = Storage.storage()
     private let reviewsCollection = "reviews"
     private let ratingsCollection = "restaurant_ratings"
+    private let notificationService = NotificationService()
     
     @Published var reviews: [RestaurantReview] = []
     @Published var isLoading = false
@@ -22,13 +23,16 @@ class ReviewsService: ObservableObject {
             db.collection(reviewsCollection).document(review.id).setData(reviewData) { [weak self] error in
                 DispatchQueue.main.async {
                     self?.isLoading = false
-                    
-                    if let error = error {
+                      if let error = error {
                         self?.errorMessage = error.localizedDescription
                         completion(false)
                     } else {
                         // Update restaurant rating
                         self?.updateRestaurantRating(restaurantId: review.restaurantId, newRating: review.rating)
+                        
+                        // Send notification to friends about new review
+                        self?.notifyFriendsAboutNewReview(review)
+                        
                         completion(true)
                     }
                 }
