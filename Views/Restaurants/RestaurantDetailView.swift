@@ -11,117 +11,152 @@ struct RestaurantDetailView: View {
     @State private var reviews: [RestaurantReview] = []
     @State private var restaurantRating: RestaurantRating?
     @State private var showingReviewSheet = false
-    
-    var body: some View {
+      var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Restaurant Image
-                    AsyncImage(url: photoURL) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.1))
-                            .overlay(
-                                Image(systemName: "photo")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.gray.opacity(0.6))
-                            )
+                    // Restaurant Image with overlay
+                    ZStack(alignment: .bottomLeading) {
+                        AsyncImage(url: photoURL) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            Rectangle()
+                                .fill(LinearGradient(
+                                    colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.05)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ))
+                                .overlay(
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 40, weight: .ultraLight))
+                                        .foregroundColor(.gray.opacity(0.6))
+                                )
+                        }
+                        .frame(height: 280)
+                        .clipped()
+                        
+                        // Gradient overlay
+                        LinearGradient(
+                            colors: [Color.clear, Color.black.opacity(0.3)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 280)
                     }
-                    .frame(height: 240)
-                    .clipped()
                     
-                    VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: 32) {
                         // Restaurant Header
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 16) {
                             Text(restaurant.name)
-                                .font(.title)
+                                .font(.largeTitle)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primary)
                             
-                            HStack(spacing: 16) {
-                                // Rating
-                                if let rating = restaurantRating {
-                                    HStack(spacing: 4) {
-                                        HStack(spacing: 2) {
-                                            ForEach(1...5, id: \.self) { star in
-                                                Image(systemName: star <= Int(rating.averageRating.rounded()) ? "star.fill" : "star")
-                                                    .foregroundColor(.orange)
-                                                    .font(.caption)
+                            HStack(spacing: 20) {
+                                // Rating with enhanced design
+                                Group {
+                                    if let rating = restaurantRating {
+                                        HStack(spacing: 8) {
+                                            HStack(spacing: 1) {
+                                                ForEach(1...5, id: \.self) { star in
+                                                    Image(systemName: star <= Int(rating.averageRating.rounded()) ? "star.fill" : "star")
+                                                        .foregroundColor(.orange)
+                                                        .font(.system(size: 14, weight: .medium))
+                                                }
                                             }
+                                            Text(String(format: "%.1f", rating.averageRating))
+                                                .font(.headline)
+                                                .fontWeight(.semibold)
+                                            Text("(\(rating.totalReviews))")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
                                         }
-                                        Text(String(format: "%.1f", rating.averageRating))
-                                            .font(.subheadline)
-                                            .fontWeight(.medium)
-                                        Text("(\(rating.totalReviews))")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                } else if let rating = restaurant.rating {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "star.fill")
-                                            .foregroundColor(.orange)
-                                            .font(.caption)
-                                        Text(String(format: "%.1f", rating))
-                                            .font(.subheadline)
-                                            .fontWeight(.medium)
-                                        Text("(Google)")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
+                                    } else if let rating = restaurant.rating {
+                                        HStack(spacing: 8) {
+                                            Image(systemName: "star.fill")
+                                                .foregroundColor(.orange)
+                                                .font(.system(size: 14, weight: .medium))
+                                            Text(String(format: "%.1f", rating))
+                                                .font(.headline)
+                                                .fontWeight(.semibold)
+                                            Text("Google")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                        }
                                     }
                                 }
                                 
-                                // Price Level
+                                // Price Level with modern styling
                                 if let priceLevel = restaurant.priceLevel {
-                                    Text(String(repeating: "$", count: priceLevel))
-                                        .foregroundColor(.green)
-                                        .fontWeight(.medium)
-                                        .font(.subheadline)
+                                    HStack(spacing: 2) {
+                                        ForEach(0..<4, id: \.self) { index in
+                                            Text("$")
+                                                .foregroundColor(index < priceLevel ? .green : .gray.opacity(0.3))
+                                                .fontWeight(.semibold)
+                                        }
+                                    }
+                                    .font(.headline)
                                 }
                             }
                         }
                         
-                        // Address
-                        VStack(alignment: .leading, spacing: 8) {
-                            Label("Address", systemImage: "location")
-                                .font(.headline)
-                                .foregroundColor(.primary)
+                        // Address with modern design
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "location.fill")
+                                    .foregroundColor(.orange.opacity(0.8))
+                                    .font(.system(size: 16))
+                                Text("Location")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                            }
                             
                             Text(restaurant.address)
                                 .foregroundColor(.secondary)
-                                .font(.subheadline)
+                                .font(.body)
+                                .lineLimit(nil)
+                                .padding(.leading, 24)
                         }
                         
-                        // Action Buttons
-                        HStack(spacing: 12) {
+                        // Action Buttons with enhanced design
+                        HStack(spacing: 16) {
                             Button(action: isSelected ? onDeselect : onSelect) {
-                                HStack {
-                                    Image(systemName: isSelected ? "checkmark.circle.fill" : "plus.circle")
-                                    Text(isSelected ? "Selected" : "Select")
+                                HStack(spacing: 8) {
+                                    Image(systemName: isSelected ? "checkmark.circle.fill" : "plus.circle.fill")
+                                        .font(.system(size: 18, weight: .medium))
+                                    Text(isSelected ? "Selected" : "Select Restaurant")
+                                        .fontWeight(.semibold)
                                 }
-                                .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 48)
-                                .background(isSelected ? Color.green : Color.orange)
-                                .cornerRadius(12)
+                                .frame(height: 52)
+                                .background(
+                                    LinearGradient(
+                                        colors: isSelected ? [Color.green, Color.green.opacity(0.8)] : [Color.orange, Color.orange.opacity(0.8)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .cornerRadius(16)
+                                .shadow(color: (isSelected ? Color.green : Color.orange).opacity(0.3), radius: 8, x: 0, y: 4)
                             }
                             
                             Button(action: { showingReviewSheet = true }) {
-                                HStack {
-                                    Image(systemName: "star.circle")
-                                    Text("Review")
+                                HStack(spacing: 8) {
+                                    Image(systemName: "star.circle.fill")
+                                        .font(.system(size: 18, weight: .medium))
+                                    Text("Write Review")
+                                        .fontWeight(.semibold)
                                 }
-                                .font(.headline)
                                 .foregroundColor(.orange)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 48)
-                                .background(Color.orange.opacity(0.1))
+                                .frame(width: 140, height: 52)
+                                .background(Color.orange.opacity(0.08))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.orange, lineWidth: 1.5)
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.orange.opacity(0.6), lineWidth: 1.5)
                                 )
                             }
                         }
