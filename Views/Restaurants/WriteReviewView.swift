@@ -218,45 +218,54 @@ struct WriteReviewView: View {
                     Spacer(minLength: 120)
                 }
                 .padding(.top, 8)
-            }
-            .navigationTitle("Write Review")
+            }            .navigationTitle("Write Review")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
                         presentationMode.wrappedValue.dismiss()
                     }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Submit") {
-                        submitReview()
-                    }
-                    .disabled(reviewText.isEmpty || isSubmitting)
-                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
                 }
             }
             .safeAreaInset(edge: .bottom) {
                 Button(action: submitReview) {
-                    HStack {
+                    HStack(spacing: 8) {
                         if isSubmitting {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                .scaleEffect(0.8)
+                                .scaleEffect(0.9)
+                        } else {
+                            Image(systemName: "paperplane.fill")
+                                .font(.system(size: 16, weight: .medium))
                         }
-                        Text(isSubmitting ? "Submitting..." : "Submit Review")
-                            .fontWeight(.semibold)
+                        Text(isSubmitting ? "Submitting Review..." : "Submit Review")
+                            .fontWeight(.bold)
                     }
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(reviewText.isEmpty ? Color.gray : Color.orange)
+                    .frame(height: 56)
+                    .background(
+                        LinearGradient(
+                            colors: reviewText.isEmpty || isSubmitting ? 
+                                [Color.gray.opacity(0.6), Color.gray.opacity(0.4)] :
+                                [Color.orange, Color.orange.opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .cornerRadius(16)
+                    .shadow(color: reviewText.isEmpty ? .clear : .orange.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
                 .disabled(reviewText.isEmpty || isSubmitting)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 10)
-                .background(Color(.systemBackground))
+                .padding(.horizontal, 24)
+                .padding(.bottom, 16)
+                .background(
+                    Rectangle()
+                        .fill(Color(.systemBackground))
+                        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: -4)
+                        .mask(Rectangle().padding(.top, -20))
+                )
             }
             .sheet(isPresented: $showingImagePicker) {
                 ImagePicker(selectedImages: $selectedPhotos)
