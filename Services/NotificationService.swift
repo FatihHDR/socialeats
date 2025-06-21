@@ -68,8 +68,7 @@ class NotificationService: NSObject, ObservableObject {
         
         sendPushNotification(notification)
     }
-    
-    func sendFriendRequestNotification(to userToken: String, fromName: String) {
+      func sendFriendRequestNotification(to userToken: String, fromName: String) {
         let notification = PushNotificationData(
             to: userToken,
             title: "New Friend Request",
@@ -77,6 +76,37 @@ class NotificationService: NSObject, ObservableObject {
             data: [
                 "type": "friend_request",
                 "from_name": fromName
+            ]
+        )
+        
+        sendPushNotification(notification)
+    }
+    
+    func sendNewReviewNotification(to userToken: String, reviewerName: String, restaurantName: String, rating: Double) {
+        let notification = PushNotificationData(
+            to: userToken,
+            title: "New Restaurant Review",
+            body: "\(reviewerName) reviewed \(restaurantName) - \(Int(rating)) stars",
+            data: [
+                "type": "new_review",
+                "reviewer_name": reviewerName,
+                "restaurant_name": restaurantName,
+                "rating": String(rating)
+            ]
+        )
+        
+        sendPushNotification(notification)
+    }
+    
+    func sendReviewLikedNotification(to userToken: String, likerName: String, restaurantName: String) {
+        let notification = PushNotificationData(
+            to: userToken,
+            title: "Review Liked",
+            body: "\(likerName) liked your review of \(restaurantName)",
+            data: [
+                "type": "review_liked",
+                "liker_name": likerName,
+                "restaurant_name": restaurantName
             ]
         )
         
