@@ -145,7 +145,15 @@ Then run:
 pod install
 ```
 
-### 5. Configure Xcode Project
+### 5. Configure Push Notifications
+1. In the Firebase Console, go to your project settings
+2. Navigate to Cloud Messaging tab
+3. Upload your APNs certificates (for production) or enable APNs development
+4. Update the `YOUR_SERVER_KEY` in `NotificationService.swift` with your Firebase Server Key
+5. Add Push Notifications capability in Xcode project settings
+6. Add Background Modes capability and enable "Remote notifications"
+
+### 6. Configure Xcode Project
 1. Add location usage description in `Info.plist` (already included)
 2. Add contacts usage description in `Info.plist` (already included)
 3. Set your development team in project settings
