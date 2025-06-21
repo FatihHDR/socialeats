@@ -3,6 +3,7 @@ import Firebase
 
 @main
 struct SocialEatsApp: App {
+    @StateObject private var notificationService = NotificationService()
     
     init() {
         FirebaseApp.configure()
@@ -11,6 +12,7 @@ struct SocialEatsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(notificationService)
         }
     }
 }
