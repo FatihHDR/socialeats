@@ -42,14 +42,14 @@ struct FriendsView: View {
                         viewModel.loadFriends()
                     }
                 }
-            }
-            .navigationTitle("Friends")
+            }            .navigationTitle("Friends")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         showingAddFriend = true
                     }) {
-                        Image(systemName: "person.badge.plus")
+                        Image(systemName: "person.badge.plus.fill")
+                            .font(.system(size: 18, weight: .medium))
                             .foregroundColor(.orange)
                     }
                 }
@@ -63,11 +63,23 @@ struct FriendsView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                         } placeholder: {
-                            Image(systemName: "person.crop.circle")
-                                .foregroundColor(.orange)
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [Color.orange.opacity(0.3), Color.orange.opacity(0.1)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .overlay(
+                                    Image(systemName: "person.fill")
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(.orange.opacity(0.7))
+                                )
                         }
-                        .frame(width: 30, height: 30)
+                        .frame(width: 32, height: 32)
                         .clipShape(Circle())
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                     }
                 }
             }
@@ -143,49 +155,81 @@ struct FriendRow: View {
     let onRemove: () -> Void
     
     var body: some View {
-        HStack(spacing: 12) {
-            // Profile Picture
-            AsyncImage(url: URL(string: friend.photoURL ?? "")) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Image(systemName: "person.crop.circle.fill")
-                    .foregroundColor(.gray)
+        HStack(spacing: 16) {
+            // Profile Picture with enhanced design
+            ZStack(alignment: .bottomTrailing) {
+                AsyncImage(url: URL(string: friend.photoURL ?? "")) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.orange.opacity(0.3), Color.orange.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 20, weight: .medium))
+                                .foregroundColor(.orange.opacity(0.7))
+                        )
+                }
+                .frame(width: 56, height: 56)
+                .clipShape(Circle())
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                
+                // Online status indicator
+                if friend.isOnline {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 16, height: 16)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 2)
+                        )
+                        .offset(x: 2, y: 2)
+                }
             }
-            .frame(width: 50, height: 50)
-            .clipShape(Circle())
             
             // Friend Info
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(friend.displayName)
                         .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
                     
                     Spacer()
-                    
-                    if friend.isOnline {
-                        Circle()
-                            .fill(Color.green)
-                            .frame(width: 8, height: 8)
-                    }
                 }
                 
                 Text(friend.email)
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
                 
                 if let selectedRestaurant = friend.selectedRestaurant,
                    !selectedRestaurant.isExpired {
-                    Text("At: \(selectedRestaurant.restaurantName)")
-                        .font(.caption)
-                        .foregroundColor(.orange)
-                        .fontWeight(.medium)
+                    HStack(spacing: 6) {
+                        Image(systemName: "fork.knife")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.orange)
+                        Text("Dining at \(selectedRestaurant.restaurantName)")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                            .fontWeight(.medium)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.orange.opacity(0.1))
+                    .cornerRadius(8)
                 }
             }
             
             Spacer()
         }
+        .padding(.vertical, 8)
         .contextMenu {
             Button(role: .destructive) {
                 onRemove()
@@ -200,45 +244,73 @@ struct FriendWithRestaurantRow: View {
     let friend: Friend
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 16) {
             // Profile Picture
             AsyncImage(url: URL(string: friend.photoURL ?? "")) { image in
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             } placeholder: {
-                Image(systemName: "person.crop.circle.fill")
-                    .foregroundColor(.gray)
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.orange.opacity(0.3), Color.orange.opacity(0.1)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(.orange.opacity(0.7))
+                    )
             }
-            .frame(width: 50, height: 50)
+            .frame(width: 56, height: 56)
             .clipShape(Circle())
+            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
             
             // Friend and Restaurant Info
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(friend.displayName)
                     .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
                 
                 if let selectedRestaurant = friend.selectedRestaurant {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(selectedRestaurant.restaurantName)
-                            .font(.subheadline)
-                            .foregroundColor(.orange)
-                            .fontWeight(.medium)
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "fork.knife.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(.orange)
+                            Text(selectedRestaurant.restaurantName)
+                                .font(.subheadline)
+                                .foregroundColor(.orange)
+                                .fontWeight(.semibold)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.orange.opacity(0.1))
+                        .cornerRadius(12)
                         
-                        Text("Until: \(selectedRestaurant.expiresAt, style: .time)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                            Text("Until \(selectedRestaurant.expiresAt, style: .time)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
             }
             
             Spacer()
             
-            Image(systemName: "fork.knife.circle.fill")
-                .foregroundColor(.orange)
-                .font(.title2)
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.secondary.opacity(0.6))
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 12)
     }
 }
 
