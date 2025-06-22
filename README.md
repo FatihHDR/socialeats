@@ -26,6 +26,22 @@ SocialEats is a modern iOS application built with SwiftUI that combines location
 - Verified visit badges for authentic reviews
 - Push notifications for review interactions
 
+### 👥 Group Dining Coordination
+- Create group dining events at restaurants
+- Invite friends to join group meals
+- Set maximum participants and event details
+- Real-time participant tracking
+- Group event notifications and reminders
+- Join/leave group dining events
+
+### 📸 Photo Sharing at Restaurants
+- Share photos from restaurant visits
+- Tag photos with categories (food, drinks, interior, etc.)
+- Like and interact with friends' photos
+- Verified photo badges for current restaurant visits
+- Photo discovery and exploration
+- Restaurant photo galleries
+
 ### 🔐 Authentication & Security
 - Firebase Authentication integration
 - Secure user registration and login
@@ -48,23 +64,39 @@ socialeats/
 │   ├── User.swift
 │   ├── Restaurant.swift
 │   ├── Friend.swift
-│   └── Review.swift
+│   ├── Review.swift
+│   ├── GroupDining.swift
+│   └── RestaurantPhoto.swift
 ├── Views/                  # SwiftUI views organized by feature
 │   ├── Authentication/
 │   ├── Restaurants/
 │   │   ├── RestaurantDetailView.swift
 │   │   └── WriteReviewView.swift
 │   ├── Friends/
+│   ├── GroupDining/
+│   │   ├── GroupDiningView.swift
+│   │   ├── CreateGroupDiningView.swift
+│   │   └── GroupDiningCard.swift
+│   ├── PhotoSharing/
+│   │   ├── PhotoSharingView.swift
+│   │   ├── PhotoCard.swift
+│   │   └── UploadPhotoView.swift
 │   ├── Components/
 │   └── ContentView.swift
 ├── ViewModels/            # Business logic and state management
 │   ├── RestaurantsViewModel.swift
-│   └── FriendsViewModel.swift
+│   ├── FriendsViewModel.swift
+│   ├── GroupDiningViewModel.swift
+│   └── RestaurantPhotoViewModel.swift
 ├── Services/              # External API and data services
 │   ├── AuthenticationService.swift
 │   ├── UserService.swift
 │   ├── GooglePlacesService.swift
 │   ├── LocationService.swift
+│   ├── NotificationService.swift
+│   ├── ReviewsService.swift
+│   ├── GroupDiningService.swift
+│   └── RestaurantPhotoService.swift
 │   ├── NotificationService.swift
 │   └── ReviewsService.swift
 ├── Utilities/             # Helper functions and extensions
@@ -211,6 +243,8 @@ service cloud.firestore {
 - `User`: Represents app users with authentication and social data
 - `Restaurant`: Google Places data with selection tracking
 - `Friend`: Social connections with activity status
+- `GroupDining`: Group dining event coordination
+- `RestaurantPhoto`: Photo sharing with tagging and interactions
 
 ### Services
 - `AuthenticationService`: Firebase Auth integration
@@ -219,10 +253,14 @@ service cloud.firestore {
 - `LocationService`: Core Location wrapper with permissions
 - `NotificationService`: Push notifications for social features
 - `ReviewsService`: Restaurant reviews and ratings management
+- `GroupDiningService`: Group dining event management
+- `RestaurantPhotoService`: Photo upload and sharing functionality
 
 ### ViewModels
 - `RestaurantsViewModel`: Manages map data and restaurant selection
 - `FriendsViewModel`: Handles social features and friend management
+- `GroupDiningViewModel`: Manages group dining events and invitations
+- `RestaurantPhotoViewModel`: Handles photo sharing and interactions
 
 ## Contributing
 
@@ -246,8 +284,8 @@ service cloud.firestore {
 
 - [x] Push notifications for friend activity
 - [x] Restaurant reviews and ratings
-- [ ] Group dining coordination
-- [ ] Photo sharing at restaurants
+- [x] Group dining coordination
+- [x] Photo sharing at restaurants
 - [ ] Restaurant reservations integration
 - [ ] Social feed with dining updates
 - [ ] Apple Maps integration as alternative
