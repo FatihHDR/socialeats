@@ -38,6 +38,20 @@ struct MainTabView: View {
                     Text("Friends")
                 }
                 .tag(1)
+            
+            GroupDiningView()
+                .tabItem {
+                    Image(systemName: "person.3.fill")
+                    Text("Group Dining")
+                }
+                .tag(2)
+            
+            PhotoSharingView()
+                .tabItem {
+                    Image(systemName: "camera.fill")
+                    Text("Photos")
+                }
+                .tag(3)
         }
         .environmentObject(authService)
         .accentColor(.orange)
@@ -53,6 +67,12 @@ struct MainTabView: View {
         .onReceive(NotificationCenter.default.publisher(for: .showRestaurantReviews)) { notification in
             selectedTab = 0
             // Handle specific restaurant navigation if needed
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .showGroupDining)) { _ in
+            selectedTab = 2
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .showPhotoSharing)) { _ in
+            selectedTab = 3
         }
     }
 }
