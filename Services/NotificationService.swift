@@ -288,4 +288,6 @@ extension Notification.Name {
     static let showRestaurantReviews = Notification.Name("showRestaurantReviews")
     static let showGroupDining = Notification.Name("showGroupDining")
     static let showPhotoSharing = Notification.Name("showPhotoSharing")
+    static let showRestaurantPhotos = Notification.Name("showRestaurantPhotos")
+    static let showPhotoGallery = Notification.Name("showPhotoGallery")
 }
