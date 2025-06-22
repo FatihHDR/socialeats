@@ -113,6 +113,61 @@ class NotificationService: NSObject, ObservableObject {
         sendPushNotification(notification)
     }
     
+    func sendGroupDiningInvitationNotification(to userToken: String, fromUserName: String, groupTitle: String, restaurantName: String, scheduledDate: Date) {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        
+        let notification = PushNotificationData(
+            to: userToken,
+            title: "Group Dining Invitation",
+            body: "\(fromUserName) invited you to \(groupTitle) at \(restaurantName) on \(formatter.string(from: scheduledDate))",
+            data: [
+                "type": "group_dining_invitation",
+                "from_user_name": fromUserName,
+                "group_title": groupTitle,
+                "restaurant_name": restaurantName,
+                "scheduled_date": scheduledDate.ISO8601Format()
+            ]
+        )
+        
+        sendPushNotification(notification)
+    }
+    
+    func sendNewPhotoNotification(to userToken: String, userName: String, restaurantName: String) {
+        let notification = PushNotificationData(
+            to: userToken,
+            title: "New Photo Shared",
+            body: "\(userName) shared a photo from \(restaurantName)",
+            data: [
+                "type": "new_photo",
+                "user_name": userName,
+                "restaurant_name": restaurantName
+            ]
+        )
+        
+        sendPushNotification(notification)
+    }
+    
+    func sendGroupDiningReminderNotification(to userToken: String, groupTitle: String, restaurantName: String, scheduledDate: Date) {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        
+        let notification = PushNotificationData(
+            to: userToken,
+            title: "Group Dining Reminder",
+            body: "Don't forget about \(groupTitle) at \(restaurantName) at \(formatter.string(from: scheduledDate))",
+            data: [
+                "type": "group_dining_reminder",
+                "group_title": groupTitle,
+                "restaurant_name": restaurantName,
+                "scheduled_date": scheduledDate.ISO8601Format()
+            ]
+        )
+        
+        sendPushNotification(notification)
+    }
+    
     private func sendPushNotification(_ notification: PushNotificationData) {
         guard let url = URL(string: "https://fcm.googleapis.com/fcm/send") else { return }
         
@@ -168,6 +223,12 @@ extension NotificationService: UNUserNotificationCenterDelegate {
             } else {
                 NotificationCenter.default.post(name: .showRestaurantsTab, object: nil)
             }
+        case "group_dining_invitation", "group_dining_reminder":
+            // Navigate to group dining section
+            NotificationCenter.default.post(name: .showGroupDining, object: nil)
+        case "new_photo":
+            // Navigate to photo sharing section
+            NotificationCenter.default.post(name: .showPhotoSharing, object: nil)
         default:
             break
         }
@@ -225,4 +286,6 @@ extension Notification.Name {
     static let showFriendRequests = Notification.Name("showFriendRequests")
     static let showRestaurantsTab = Notification.Name("showRestaurantsTab")
     static let showRestaurantReviews = Notification.Name("showRestaurantReviews")
+    static let showGroupDining = Notification.Name("showGroupDining")
+    static let showPhotoSharing = Notification.Name("showPhotoSharing")
 }
